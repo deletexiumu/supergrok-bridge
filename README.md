@@ -20,6 +20,8 @@
 
 将 Grok 集成到 Claude Code 等 MCP 客户端中，作为工具直接调用。
 
+![Claude Code 中调用 Grok MCP 效果](screenshot/claude%20mcp.png)
+
 ```bash
 # 注册到 Claude Code（需先启动 REST API 服务）
 claude mcp add --scope user grok-mcp -- python3 /path/to/scripts/grok_mcp.py

@@ -20,6 +20,8 @@ Uses AppleScript to inject JavaScript into Safari for automated interaction with
 
 Integrate Grok into Claude Code or other MCP clients as callable tools.
 
+![Grok MCP in Claude Code](screenshot/claude%20mcp.png)
+
 ```bash
 # Register with Claude Code (requires REST API service running)
 claude mcp add --scope user grok-mcp -- python3 /path/to/scripts/grok_mcp.py
