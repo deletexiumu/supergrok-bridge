@@ -2,6 +2,8 @@
 
 将 **SuperGrok** 变成 REST API + MCP Server，无需 API Key。
 
+支持三种调用方式：**MCP Server** | **REST API** | **CLI**
+
 > 本项目基于 [ythx-101/grok-bridge](https://github.com/ythx-101/grok-bridge)。由于原项目已较长时间未维护，积压的 PR 和 Bug 未得到处理，因此新开此仓库独立维护。在原有基础上修复了 grok.com UI 变更导致的兼容性问题，并新增了 MCP Server 支持。
 
 [English](README_EN.md)
@@ -145,7 +147,21 @@ graph LR
     H -. 响应 .-> D
 ```
 
-## 技术要点
+## 文件说明
+
+| 文件 | 说明 |
+|------|------|
+| `scripts/grok_bridge.py` | REST API 服务（核心） |
+| `scripts/grok_mcp.py` | MCP Server，封装 REST API 为 MCP 工具 |
+| `scripts/grok_chat.sh` | CLI 工具（bash，备用） |
+
+## 设计决策与技术要点
+
+Safari 不支持标准 Chrome DevTools Protocol。macOS 上控制 Safari 最可靠的方式是 AppleScript + JavaScript 注入：
+
+- AppleScript `do JavaScript` 等价于 CDP `Runtime.evaluate`
+- `document.execCommand('insertText')` 实现输入（绕过 React 受控组件）
+- JS `button.click()` 实现提交（不依赖 System Events 权限）
 
 React 受控组件会忽略 JavaScript 的 `value` setter、合成 `InputEvent` 以及 `nativeInputValueSetter`。
 

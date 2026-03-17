@@ -2,6 +2,8 @@
 
 Turn **SuperGrok** into a REST API + MCP Server. No API key needed.
 
+Three interfaces: **MCP Server** | **REST API** | **CLI**
+
 > This project is based on [ythx-101/grok-bridge](https://github.com/ythx-101/grok-bridge). The original repo has been inactive for a while with pending PRs and bugs unaddressed, so this repo was created for independent maintenance. It fixes compatibility issues caused by grok.com UI changes and adds MCP Server support.
 
 [中文文档](README.md)
@@ -145,7 +147,21 @@ graph LR
     H -. response .-> D
 ```
 
-## Key Technical Insight
+## Files
+
+| File | Description |
+|------|-------------|
+| `scripts/grok_bridge.py` | REST API service (core) |
+| `scripts/grok_mcp.py` | MCP Server, wraps REST API as MCP tools |
+| `scripts/grok_chat.sh` | CLI tool (bash, fallback) |
+
+## Design Decisions & Technical Insight
+
+Safari does not support the standard Chrome DevTools Protocol. The most reliable way to control Safari on macOS is AppleScript + JavaScript injection:
+
+- AppleScript `do JavaScript` is equivalent to CDP `Runtime.evaluate`
+- `document.execCommand('insertText')` handles input (bypasses React controlled components)
+- JS `button.click()` handles submission (no System Events permission needed)
 
 React controlled inputs ignore JavaScript `value` setter, synthetic `InputEvent`, and `nativeInputValueSetter`.
 
