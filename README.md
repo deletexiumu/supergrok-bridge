@@ -186,8 +186,6 @@ React 受控组件会忽略 JavaScript 的 `value` setter、合成 `InputEvent` 
 ## 致谢
 
 - 原项目：[ythx-101/grok-bridge](https://github.com/ythx-101/grok-bridge)
-- v3 架构设计：Claude Opus 4.6 (via [Antigravity](https://antigravity.so))
-- System Events 绕过方案：小灵
 
 ## License
 

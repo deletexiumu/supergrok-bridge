@@ -186,8 +186,6 @@ Based on [ythx-101/grok-bridge](https://github.com/ythx-101/grok-bridge) v3 (RES
 ## Credits
 
 - Original project: [ythx-101/grok-bridge](https://github.com/ythx-101/grok-bridge)
-- v3 architecture: Claude Opus 4.6 (via [Antigravity](https://antigravity.so))
-- System Events bypass: xiaoling
 
 ## License
 
