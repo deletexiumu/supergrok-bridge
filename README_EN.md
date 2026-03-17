@@ -122,20 +122,27 @@ launchctl load ~/Library/LaunchAgents/com.supergrok-bridge.plist
 
 ## Architecture
 
-```
-┌──────────────────┐                     ┌───────────────────────┐
-│  MCP Client      │                     │      macOS            │
-│  (Claude Code)   │                     │                       │
-├──────────────────┤  POST /chat         │  grok_bridge.py       │
-│  HTTP Client     │ ──────────────────→ │  ↓ osascript          │
-│  (curl/scripts)  │                     │  Safari do JavaScript │
-├──────────────────┤                     │  ↓ execCommand        │
-│  CLI             │                     │  grok.com input       │
-│  (grok_chat.sh)  │                     │  ↓ button.click()     │
-└──────────────────┘                     │  Grok responds        │
-                                         │  ↓ DOM polling        │
-                                         │  Response extracted   │
-                                         └───────────────────────┘
+```mermaid
+graph LR
+    subgraph Clients
+        A[MCP Client<br/>Claude Code]
+        B[HTTP Client<br/>curl / scripts]
+        C[CLI<br/>grok_chat.sh]
+    end
+
+    subgraph macOS
+        D[grok_bridge.py<br/>REST API :19998]
+        E[osascript]
+        F[Safari<br/>do JavaScript]
+        G[grok.com<br/>execCommand + click]
+        H[DOM Polling<br/>Extract Response]
+    end
+
+    A -- MCP stdio --> D
+    B -- POST /chat --> D
+    C -- HTTP --> D
+    D --> E --> F --> G --> H
+    H -. response .-> D
 ```
 
 ## Key Technical Insight

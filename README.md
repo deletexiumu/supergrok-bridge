@@ -122,20 +122,27 @@ launchctl load ~/Library/LaunchAgents/com.grok-bridge.plist
 
 ## 架构
 
-```
-┌──────────────────┐                     ┌───────────────────────┐
-│  MCP Client      │                     │      macOS            │
-│  (Claude Code)   │                     │                       │
-├──────────────────┤  POST /chat         │  grok_bridge.py       │
-│  HTTP Client     │ ──────────────────→ │  ↓ osascript          │
-│  (curl/脚本)     │                     │  Safari do JavaScript │
-├──────────────────┤                     │  ↓ execCommand        │
-│  CLI             │                     │  grok.com 输入框      │
-│  (grok_chat.sh)  │                     │  ↓ button.click()     │
-└──────────────────┘                     │  Grok 生成响应        │
-                                         │  ↓ DOM 轮询           │
-                                         │  提取响应文本         │
-                                         └───────────────────────┘
+```mermaid
+graph LR
+    subgraph 客户端
+        A[MCP Client<br/>Claude Code]
+        B[HTTP Client<br/>curl / 脚本]
+        C[CLI<br/>grok_chat.sh]
+    end
+
+    subgraph macOS
+        D[grok_bridge.py<br/>REST API :19998]
+        E[osascript]
+        F[Safari<br/>do JavaScript]
+        G[grok.com<br/>execCommand + click]
+        H[DOM 轮询<br/>提取响应]
+    end
+
+    A -- MCP stdio --> D
+    B -- POST /chat --> D
+    C -- HTTP --> D
+    D --> E --> F --> G --> H
+    H -. 响应 .-> D
 ```
 
 ## 技术要点
