@@ -14,10 +14,11 @@ Usage (Claude Code settings.json):
   }
 """
 import json
+import os
 import urllib.request
 from mcp.server.fastmcp import FastMCP
 
-BRIDGE_URL = "http://localhost:19998"
+BRIDGE_URL = os.environ.get("GROK_BRIDGE_URL", "http://localhost:19998")
 
 mcp = FastMCP("grok-bridge")
 

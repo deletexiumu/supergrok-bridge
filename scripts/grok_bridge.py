@@ -87,9 +87,26 @@ class GrokBridge:
         return True
     def _get_body(s):
         return s._js('document.body.innerText',timeout=15)
+    def _is_generating(s):
+        """Check if Grok is still generating (stop button present)"""
+        r=s._js("!!document.querySelector('button[aria-label=\"Stop model response\"]')",timeout=10)
+        return r=='true'
+    def _handle_two_versions(s):
+        """Detect and handle Grok's two-version selection UI. Returns True if handled."""
+        r=s._js("""(()=>{
+            const body=document.body.innerText;
+            if(!/Which response do you prefer/i.test(body))return'NO';
+            const btns=[...document.querySelectorAll('button')];
+            const skip=btns.find(b=>/Skip Selection/i.test(b.textContent||''));
+            if(skip){skip.click();return'SKIPPED'}
+            const prefer=btns.find(b=>/Prefer this response/i.test(b.textContent||''));
+            if(prefer){prefer.click();return'PREFERRED'}
+            return'NO_BTN';
+        })()""",timeout=10)
+        return r in('SKIPPED','PREFERRED','NO_BTN')
     def _clean(s,text):
         """Clean Grok UI artifacts from response"""
-        for m in['\nAsk anything','\nDeepSearch','\nThink Harder','\nThink\n','\nAttach','\nGrok','\nFast\n','\nAuto\n','\nUpgrade to']:
+        for m in['\nAsk anything','\nDeepSearch','\nThink Harder','\nThink\n','\nAttach','\nGrok','\nFast\n','\nAuto\n','\nUpgrade to','\nWhich response do you prefer','\nSkip Selection','\nPrefer this response']:
             i=text.rfind(m)
             if i>0:text=text[:i]
         text=re.sub(r'\n[0-9]+(\.[0-9]+)?s\n','\n',text)  # remove "1.3s" timing
@@ -111,9 +128,15 @@ class GrokBridge:
             body_before=s._get_body()
             s._type_and_send(prompt,sel)
             # Poll for response stability
-            start=time.time();last='';stable=0
+            start=time.time();last='';stable=0;version_handled=False
             while time.time()-start<timeout:
                 time.sleep(2)
+                # If stop button present, Grok is still generating — reset stability
+                if s._is_generating():
+                    stable=0;last='';continue
+                # Detect two-version selection UI
+                if not version_handled and s._handle_two_versions():
+                    version_handled=True;stable=0;last='';time.sleep(3);continue
                 body=s._get_body()
                 # Response appeared and stabilized
                 if body!=body_before and body==last:
