@@ -74,7 +74,7 @@ MAC_SSH="ssh user@your-mac" bash scripts/grok_chat.sh "写一首俳句" --timeou
 - 已登录 [grok.com](https://grok.com)（免费版或 SuperGrok 均可）
 - Safari > 设置 > 高级 > 勾选「显示网页开发者功能」
 - Safari > 开发 > 勾选「允许来自 Apple Events 的 JavaScript」
-- **无需辅助功能权限**（v3 使用纯 JS 注入）
+- **无需辅助功能权限**
 
 ## 建议
 
